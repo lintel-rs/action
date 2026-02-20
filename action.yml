@@ -1,0 +1,86 @@
+name: "Lintel"
+description: "Validate JSON, YAML, and TOML files against JSON Schema"
+author: "lintel-rs"
+
+branding:
+  icon: "check-circle"
+  color: "blue"
+
+inputs:
+  version:
+    description: "lintel-github-action version to install (default: latest)"
+    required: false
+    default: "latest"
+  github-token:
+    description: "GitHub token for creating Check Runs"
+    required: false
+    default: ${{ github.token }}
+  paths:
+    description: "Paths or globs to validate"
+    required: false
+    default: ""
+  exclude:
+    description: "Exclude patterns (can be repeated, comma-separated)"
+    required: false
+    default: ""
+  no-catalog:
+    description: "Disable SchemaStore catalog matching"
+    required: false
+    default: "false"
+  args:
+    description: "Additional arguments to pass to lintel-github-action"
+    required: false
+    default: ""
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install lintel-github-action
+      shell: bash
+      env:
+        LINTEL_VERSION: ${{ inputs.version }}
+      run: |
+        set -euo pipefail
+
+        if [ "$LINTEL_VERSION" = "latest" ]; then
+          LINTEL_VERSION=$(gh release view --repo lintel-rs/action --json tagName -q .tagName 2>/dev/null || echo "")
+          if [ -z "$LINTEL_VERSION" ]; then
+            echo "::error::Failed to determine latest lintel-github-action version"
+            exit 1
+          fi
+        fi
+
+        URL="https://github.com/lintel-rs/action/releases/download/${LINTEL_VERSION}/lintel-github-action-x86_64-unknown-linux-gnu.tar.gz"
+        echo "Downloading lintel-github-action ${LINTEL_VERSION}..."
+
+        curl -sL "$URL" | tar xz -C /usr/local/bin
+        chmod +x /usr/local/bin/lintel-github-action
+        echo "Installed lintel-github-action ${LINTEL_VERSION}"
+
+    - name: Run Lintel
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+      run: |
+        ARGS=""
+
+        if [ -n "${{ inputs.paths }}" ]; then
+          ARGS="${{ inputs.paths }}"
+        fi
+
+        if [ -n "${{ inputs.exclude }}" ]; then
+          IFS=',' read -ra EXCLUDES <<< "${{ inputs.exclude }}"
+          for pattern in "${EXCLUDES[@]}"; do
+            ARGS="$ARGS --exclude $(echo "$pattern" | xargs)"
+          done
+        fi
+
+        if [ "${{ inputs.no-catalog }}" = "true" ]; then
+          ARGS="$ARGS --no-catalog"
+        fi
+
+        if [ -n "${{ inputs.args }}" ]; then
+          ARGS="$ARGS ${{ inputs.args }}"
+        fi
+
+        lintel-github-action $ARGS
