@@ -1,4 +1,4 @@
-name: "Lintel"
+name: "Lintel Schema Validation"
 description: "Validate JSON, YAML, and TOML files against JSON Schema"
 author: "lintel-rs"
 
