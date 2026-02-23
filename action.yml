@@ -38,6 +38,7 @@ runs:
     - name: Install lintel-github-action
       shell: bash
       env:
+        GH_TOKEN: ${{ inputs.github-token }}
         LINTEL_VERSION: ${{ inputs.version }}
       run: |
         set -euo pipefail
