@@ -2,10 +2,10 @@
   "nodes": {
     "crane": {
       "locked": {
-        "lastModified": 1771438068,
+        "lastModified": 1771796463,
         "owner": "ipetkov",
         "repo": "crane",
-        "rev": "b5090e53e9d68c523a4bb9ad42b4737ee6747597",
+        "rev": "3d3de3313e263e04894f284ac18177bd26169bad",
         "type": "github"
       },
       "original": {
@@ -17,10 +17,10 @@
     "devenv": {
       "locked": {
         "dir": "src/modules",
-        "lastModified": 1771610023,
+        "lastModified": 1771672827,
         "owner": "cachix",
         "repo": "devenv",
-        "rev": "3631489b8b3b8a7b4948824b621d02a420b58cc7",
+        "rev": "6757a742f6393c7070f159eed9a59cbe20690aa3",
         "type": "github"
       },
       "original": {
@@ -110,10 +110,10 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1771737963,
+        "lastModified": 1771812501,
         "owner": "lintel-rs",
         "repo": "lintel",
-        "rev": "6e31f8e7f0b8158bbe4c985bb57a3628d9d23186",
+        "rev": "ec4ce446eb076ae1a0d652a836de1d623d8d7392",
         "type": "github"
       },
       "original": {
