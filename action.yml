@@ -8,7 +8,7 @@ branding:
 
 inputs:
   version:
-    description: "lintel-github-action version to install (default: latest)"
+    description: "lintel version to install (default: latest)"
     required: false
     default: "latest"
   github-token:
@@ -28,14 +28,14 @@ inputs:
     required: false
     default: "false"
   args:
-    description: "Additional arguments to pass to lintel-github-action"
+    description: "Additional arguments to pass to lintel github-action"
     required: false
     default: ""
 
 runs:
   using: "composite"
   steps:
-    - name: Install lintel-github-action
+    - name: Install lintel
       shell: bash
       env:
         GH_TOKEN: ${{ inputs.github-token }}
@@ -44,19 +44,19 @@ runs:
         set -euo pipefail
 
         if [ "$LINTEL_VERSION" = "latest" ]; then
-          LINTEL_VERSION=$(gh release view --repo lintel-rs/action --json tagName -q .tagName 2>/dev/null || echo "")
+          LINTEL_VERSION=$(gh release view --repo lintel-rs/lintel --json tagName -q .tagName 2>/dev/null || echo "")
           if [ -z "$LINTEL_VERSION" ]; then
-            echo "::error::Failed to determine latest lintel-github-action version"
+            echo "::error::Failed to determine latest lintel version"
             exit 1
           fi
         fi
 
-        URL="https://github.com/lintel-rs/action/releases/download/${LINTEL_VERSION}/lintel-github-action-x86_64-unknown-linux-musl.tar.gz"
-        echo "Downloading lintel-github-action ${LINTEL_VERSION}..."
+        URL="https://github.com/lintel-rs/lintel/releases/download/${LINTEL_VERSION}/lintel-x86_64-unknown-linux-musl.tar.gz"
+        echo "Downloading lintel ${LINTEL_VERSION}..."
 
         curl -sL "$URL" | tar xz -C /usr/local/bin
-        chmod +x /usr/local/bin/lintel-github-action
-        echo "Installed lintel-github-action ${LINTEL_VERSION}"
+        chmod +x /usr/local/bin/lintel
+        echo "Installed lintel ${LINTEL_VERSION}"
 
     - name: Run Lintel
       shell: bash
@@ -84,4 +84,4 @@ runs:
           ARGS="$ARGS ${{ inputs.args }}"
         fi
 
-        lintel-github-action $ARGS
+        lintel github-action $ARGS
