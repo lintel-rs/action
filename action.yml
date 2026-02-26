@@ -44,7 +44,7 @@ runs:
         set -euo pipefail
 
         if [ "$LINTEL_VERSION" = "latest" ]; then
-          LINTEL_VERSION=$(gh release view --repo lintel-rs/lintel --json tagName -q .tagName 2>/dev/null || echo "")
+          LINTEL_VERSION=$(gh release view --repo lintel-rs/action --json tagName -q .tagName 2>/dev/null || echo "")
           if [ -z "$LINTEL_VERSION" ]; then
             echo "::error::Failed to determine latest lintel version"
             exit 1
