@@ -44,9 +44,16 @@ runs:
         set -euo pipefail
 
         if [ "$LINTEL_VERSION" = "latest" ]; then
-          LINTEL_VERSION=$(gh release list --repo lintel-rs/lintel --json tagName --jq '[.[] | select(.tagName | test("^v[0-9]+\\.[0-9]+\\.[0-9]+$")) | .tagName] | first')
+          ASSET_NAME="lintel-x86_64-unknown-linux-musl.tar.gz"
+          LINTEL_VERSION=$(gh release list --repo lintel-rs/lintel --json tagName --jq '[.[] | select(.tagName | test("^v[0-9]+\\.[0-9]+\\.[0-9]+$")) | .tagName] | .[]' | while read -r tag; do
+            # Check if this release has the expected binary asset
+            if gh release view "$tag" --repo lintel-rs/lintel --json assets --jq ".assets[].name" 2>/dev/null | grep -qx "$ASSET_NAME"; then
+              echo "$tag"
+              break
+            fi
+          done)
           if [ -z "$LINTEL_VERSION" ]; then
-            echo "::error::Failed to determine latest lintel version"
+            echo "::error::Failed to find a lintel release with build artifacts"
             exit 1
           fi
         fi
